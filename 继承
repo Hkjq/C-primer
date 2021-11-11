@@ -1,0 +1,68 @@
+#pragma once
+#include <iostream>
+using namespace std;
+
+class Quote {
+	friend void print(const string&, size_t);
+public:
+	//默认构造
+	Quote();
+	//构造
+	Quote(const string& Book, size_t n) :BookNo(Book), price(n) {};
+	//反馈书名
+	string BookName() const{
+		return BookNo;
+	}
+	//花钱算法 虚函数 希望子类有自己的算法
+	virtual double money(size_t n) {
+		return n * price;
+	}
+private:
+	//书的名字
+	string BookNo;
+protected:
+	//书的价格
+	double price;
+};
+
+//派生类 继承
+class Bulk_quote :public Quote {
+public:
+	//默认构造函数
+	Bulk_quote();
+	//构造
+	Bulk_quote(const string& name, size_t n, double dis, size_t bo_no)
+		:Quote(name, n), discount(dis), book_number(bo_no) {};
+	//买x本书 有优惠 被重写的虚函数
+	double money(size_t x) override {
+		if (x >= book_number) {
+			return x * price * discount;
+		}
+		else {
+			return x * price;
+		}
+	}
+private:
+	//折扣
+	double discount;
+	//低消 最低消费书的数量 超过能打折 调用花钱算法
+	size_t book_number;
+};
+
+void print(Quote& q,size_t n) {
+	cout << "买了" << n << "本" << q.BookName() << endl;
+	cout << "花费" << q.money(n);
+}
+
+
+#include "标头.h"
+
+int main() {
+	Quote q1("龙1",10);
+	Bulk_quote q2("龙2",100,0.7,10);
+
+	print(q1,10);
+	print(q2, 10);
+	system("pause");
+	return 0;
+}
